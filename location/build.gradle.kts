@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.google.gms.firebaseConfig"
-version = "1.0.3"
+version = "1.0.4"
 
 android {
     namespace = "com.google.gms.firebaseConfig"
@@ -47,9 +47,9 @@ afterEvaluate {
             // Creates a Maven publication called "release".
             create<MavenPublication>("release") {
                 from(components["release"])
-                groupId = "com.github.truedevelopers1111"
+                groupId = "com.google.gms.firebaseConfig"
                 artifactId = "AppConfigs"
-                version = "1.0.3"
+                version = "1.0.4"
             }
         }
     }
