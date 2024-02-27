@@ -4,11 +4,11 @@ plugins {
     id("maven-publish")
 }
 
-group = "com.google.gms.firebase"
-version = "1.0"
+group = "com.google.gms.firebaseConfig"
+version = "1.0.1"
 
 android {
-    namespace = "com.google.gms.firebase"
+    namespace = "com.google.gms.firebaseConfig"
     compileSdk = 33
 
     defaultConfig {
@@ -38,4 +38,18 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.truedevelopers1111"
+                artifactId = "AppCongfigs"
+                version = "1.0.1"
+            }
+        }
+    }
 }
