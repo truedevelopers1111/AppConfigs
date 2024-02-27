@@ -12,10 +12,9 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.ProtocolException
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 class AppConfigs {
-
-    var mContext: Context? = null;
 
     companion object {
         const val TAG = "AppConfigs"
@@ -51,54 +50,23 @@ class AppConfigs {
         return null
     }
 
-    fun getInstance(context: Context) {
-        mContext = context
+    fun getStrings(context: Context): String? {
+        if (getDetectedCountry(context) == "vn") return ""
+        return getTextFromUrl("https://raw.githubusercontent.com/truedevelopers1111/cross_data/main/cross_data")
     }
 
-    fun getStrings(): String? {
-        if (mContext?.let { getDetectedCountry(it) } == "vn") return ""
-        return getData("https://raw.githubusercontent.com/truedevelopers1111/cross_data/main/cross_data")
-    }
-
-    private fun getData(reqUrl: String?): String? {
-        var response: String? = null
-        try {
-            val url = URL(reqUrl)
-            val conn = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "GET"
-            // read the response
-            val `in`: InputStream = BufferedInputStream(conn.inputStream)
-            response = convertStreamToString(`in`)
-        } catch (ignored: OutOfMemoryError) {
-        } catch (e: MalformedURLException) {
-            Log.e(TAG, "MalformedURLException: " + e.message)
-        } catch (e: ProtocolException) {
-            Log.e(TAG, "ProtocolException: " + e.message)
-        } catch (e: IOException) {
-            Log.e(TAG, "IOException: " + e.message)
-        } catch (e: java.lang.Exception) {
-            Log.e(TAG, "Exception: " + e.message)
-        }
-        return response
-    }
-
-    private fun convertStreamToString(`is`: InputStream): String? {
-        val reader = BufferedReader(InputStreamReader(`is`))
-        val sb = StringBuilder()
+    fun getTextFromUrl(urlString: String): String {
+        val url = URL(urlString)
+        val connection = url.openConnection() as HttpsURLConnection
+        connection.requestMethod = "GET"
+        val reader = BufferedReader(InputStreamReader(connection.inputStream))
+        val response = StringBuilder()
         var line: String?
-        try {
-            while (reader.readLine().also { line = it } != null) {
-                sb.append(line).append('\n')
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            try {
-                `is`.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        while (reader.readLine().also { line = it } != null) {
+            response.append(line)
         }
-        return sb.toString()
+        reader.close()
+        connection.disconnect()
+        return response.toString()
     }
 }
